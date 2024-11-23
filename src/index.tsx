@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, Outlet, RouterProvider } from 'react-router-dom';
 import { Root } from './root';
 import { routes } from '@/routes/routes';
+import '@/styles/material-icons.css';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
