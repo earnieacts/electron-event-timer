@@ -151,7 +151,7 @@ export function Timer() {
       <main className="flex-1 flex flex-col items-center justify-center px-4 py-6 overflow-hidden">
         <div className="flex flex-col items-center gap-8">
           <h1 className="text-gray-900 dark:text-white text-xl mb-8 select-none">
-            EVENT TIMER
+            {timerState.mode === 'simple' ? 'NORMAL MODE' : 'EVENT MODE'}
           </h1>
           <CircularTimer 
             time={timerState.currentTime} 
