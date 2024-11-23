@@ -49,12 +49,12 @@ yarn install
 To run the app in development mode:
 
 ```bash
-npm run dev
+npm run electron:dev
 ```
 or
 
 ```bash
-yarn dev
+yarn run electron:dev
 ```
 
 This will:
