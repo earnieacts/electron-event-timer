@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import Header from '@/components/layout/header';
+import Footer from '@/components/layout/footer';
 import CircularTimer from '@/components/timer/circular-timer';
 import TimerControls from '@/components/timer/time-controls';
 import { TimerState, TimerMode } from '@/types/timer';
@@ -168,6 +169,7 @@ export function Timer() {
           />
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { TimePicker } from './time-picker';
 
 interface TimeInputModalProps {
   onSubmit: (minutes: number) => void;
@@ -6,33 +7,41 @@ interface TimeInputModalProps {
 }
 
 const TimeInputModal: React.FC<TimeInputModalProps> = ({ onSubmit, onClose }) => {
-  const [minutes, setMinutes] = useState<string>('');
+  const [hours, setHours] = useState(0);
+  const [minutes, setMinutes] = useState(0);
+  const [seconds, setSeconds] = useState(0);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const parsedMinutes = parseInt(minutes);
-    if (!isNaN(parsedMinutes) && parsedMinutes > 0) {
-      onSubmit(parsedMinutes);
+    const totalMinutes = hours * 60 + minutes + seconds / 60;
+    if (totalMinutes > 0) {
+      onSubmit(totalMinutes);
     }
   };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-gray-800 p-6 rounded-lg shadow-lg w-80">
-        <h2 className="text-white text-lg mb-4">Set Timer Duration</h2>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <div>
-            <label htmlFor="minutes" className="text-white block mb-2">
-              Minutes
-            </label>
-            <input
-              type="number"
-              id="minutes"
+      <div className="bg-gray-900 p-6 rounded-lg shadow-lg w-80">
+        <h2 className="text-white text-lg mb-4 text-center">Set Timer Duration</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="flex justify-between gap-2 mb-6">
+            <TimePicker
+              value={hours}
+              onChange={setHours}
+              max={23}
+              label="Hours"
+            />
+            <TimePicker
               value={minutes}
-              onChange={(e) => setMinutes(e.target.value)}
-              className="w-full px-3 py-2 bg-gray-700 text-white rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              min="1"
-              required
+              onChange={setMinutes}
+              max={59}
+              label="Minutes"
+            />
+            <TimePicker
+              value={seconds}
+              onChange={setSeconds}
+              max={59}
+              label="Seconds"
             />
           </div>
           <div className="flex justify-end gap-2">

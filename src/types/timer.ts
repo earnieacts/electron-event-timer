@@ -11,5 +11,6 @@ export interface TimerState {
     timePerRound: number;
     intervalTime: number;
     isInterval: boolean;
+    formattedIntervalTime?: string;
   };
 } 

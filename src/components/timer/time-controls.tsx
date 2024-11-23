@@ -2,9 +2,14 @@ import React, { useState } from 'react';
 import { TimerMode } from '@/types/timer';
 import TimeInputModal from './time-input-modal';
 import EventSettingsModal from './event-settings-modal';
+import Pause from '@mui/icons-material/Pause';
+import PlayArrow from '@mui/icons-material/PlayArrow';
+import RestartAlt from '@mui/icons-material/RestartAlt';
+import Timer from '@mui/icons-material/Timer';
+import Event from '@mui/icons-material/Event';
 
 interface TimerButtonProps {
-  icon: string;
+  icon: React.ReactElement;
   label: string;
   onClick: () => void;
   variant?: 'primary' | 'secondary' | 'default';
@@ -23,7 +28,7 @@ const TimerButton: React.FC<TimerButtonProps> = ({ icon, label, onClick, variant
       className={`${baseClasses} ${variantClasses[variant]}`}
       onClick={onClick}
     >
-      <span className="material-icons text-xl">{icon}</span>
+      {React.cloneElement(icon, { className: 'text-xl' })}
       {label}
     </button>
   );
@@ -65,21 +70,35 @@ const TimerControls: React.FC<TimerControlsProps> = ({
     <div className="flex flex-col gap-3 items-center">
       <div className="flex gap-2">
         {isRunning ? (
-          <TimerButton icon="pause" label="Pause" variant="primary" onClick={onPause} />
+          <TimerButton 
+            icon={<Pause />} 
+            label="Pause" 
+            variant="primary" 
+            onClick={onPause} 
+          />
         ) : (
-          <TimerButton icon="play_arrow" label="Start" variant="primary" onClick={onStart} />
+          <TimerButton 
+            icon={<PlayArrow />} 
+            label="Start" 
+            variant="primary" 
+            onClick={onStart} 
+          />
         )}
-        <TimerButton icon="restart_alt" label="Reset" onClick={onReset} />
+        <TimerButton 
+          icon={<RestartAlt />} 
+          label="Reset" 
+          onClick={onReset} 
+        />
       </div>
       <div className="flex gap-2">
         <TimerButton 
-          icon="timer" 
+          icon={<Timer />}
           label="Set Time" 
           variant={mode === 'simple' ? 'secondary' : 'default'}
           onClick={() => setShowTimeInput(true)} 
         />
         <TimerButton 
-          icon="event" 
+          icon={<Event />}
           label={mode === 'event' ? 'Normal Mode' : 'Event Mode'}
           variant={mode === 'event' ? 'secondary' : 'default'}
           onClick={() => {
