@@ -16,7 +16,7 @@ function createWindow() {
       nodeIntegration: false,
       preload: path.join(__dirname, 'preload.js')
     },
-    backgroundColor: '#000000',
+    backgroundColor: '#121212',
   });
 
   if (isDev) {
