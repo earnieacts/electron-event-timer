@@ -6,11 +6,8 @@ let mainWindow: BrowserWindow | null = null;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 400,
-    height: 450,
-    minWidth: 400,
-    minHeight: 450,
-    frame: false,
+    minWidth: 1200,
+    minHeight: 800,
     webPreferences: {
       contextIsolation: true,
       nodeIntegration: false,
@@ -26,24 +23,26 @@ function createWindow() {
   }
 
   // Window control handlers
-  ipcMain.on('window:minimize', () => {
+  ipcMain.handle('window:minimize', () => {
     mainWindow?.minimize();
   });
 
-  ipcMain.on('window:maximize', () => {
+  ipcMain.handle('window:maximize', () => {
     if (mainWindow?.isMaximized()) {
       mainWindow.unmaximize();
+      return false;
     } else {
       mainWindow?.maximize();
+      return true;
     }
   });
 
-  ipcMain.on('window:close', () => {
+  ipcMain.handle('window:close', () => {
     mainWindow?.close();
   });
 
-  ipcMain.on('window:openExternal', (_, url) => {
-    shell.openExternal(url);
+  ipcMain.handle('window:isMaximized', () => {
+    return mainWindow?.isMaximized();
   });
 
   if (isDev) {
