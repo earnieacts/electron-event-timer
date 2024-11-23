@@ -13,7 +13,7 @@ const Header: React.FC = () => {
       style={{ WebkitAppRegion: 'drag' } as React.CSSProperties}
     >
       <div 
-        className="flex items-center gap-4" 
+        className="flex items-center gap-4 px-4 py-2" 
         style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
       >
         <ThemeToggle currentTheme={theme} onThemeChange={setTheme} />
