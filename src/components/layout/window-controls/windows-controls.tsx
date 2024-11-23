@@ -1,9 +1,23 @@
 import React from 'react';
 
 const WindowsControls: React.FC = () => {
-  const handleMinimize = () => window.electron?.window.minimize();
-  const handleMaximize = () => window.electron?.window.maximize();
-  const handleClose = () => window.electron?.window.close();
+  const handleMinimize = () => {
+    if (window.electron?.window?.minimize) {
+      window.electron.window.minimize();
+    }
+  };
+  
+  const handleMaximize = () => {
+    if (window.electron?.window?.maximize) {
+      window.electron.window.maximize();
+    }
+  };
+  
+  const handleClose = () => {
+    if (window.electron?.window?.close) {
+      window.electron.window.close();
+    }
+  };
 
   return (
     <div className="flex">

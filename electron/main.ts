@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import * as path from 'path';
 import isDev from 'electron-is-dev';
 
@@ -7,9 +7,9 @@ let mainWindow: BrowserWindow | null = null;
 function createWindow() {
   mainWindow = new BrowserWindow({
     width: 400,
-    height: 600,
+    height: 450,
     minWidth: 400,
-    minHeight: 600,
+    minHeight: 450,
     frame: false,
     webPreferences: {
       contextIsolation: true,
@@ -22,7 +22,7 @@ function createWindow() {
   if (isDev) {
     mainWindow.loadURL('http://localhost:5173');
   } else {
-    mainWindow.loadFile(path.join(__dirname, '../../build/index.html'));
+    mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'));
   }
 
   // Window control handlers
@@ -40,6 +40,10 @@ function createWindow() {
 
   ipcMain.on('window:close', () => {
     mainWindow?.close();
+  });
+
+  ipcMain.on('window:openExternal', (_, url) => {
+    shell.openExternal(url);
   });
 
   if (isDev) {
