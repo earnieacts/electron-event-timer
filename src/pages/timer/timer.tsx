@@ -3,17 +3,49 @@ import Header from '@/components/layout/header';
 import Footer from '@/components/layout/footer';
 import CircularTimer from '@/components/timer/circular-timer';
 import TimerControls from '@/components/timer/time-controls';
+import TimerCompleteModal from '@/components/timer/timer-complete-modal';
 import { TimerState, TimerMode } from '@/types/timer';
 
 export function Timer() {
   const [timerState, setTimerState] = useState<TimerState>({
     mode: 'simple',
-    timeLimit: 300, // 5 minutes default
+    timeLimit: 300,
     currentTime: 300,
     isRunning: false,
   });
-
+  const [showCompleteModal, setShowCompleteModal] = useState(false);
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
+
+  const pauseTimer = useCallback(() => {
+    if (intervalId) {
+      clearInterval(intervalId);
+      setIntervalId(null);
+      setTimerState(prev => ({ ...prev, isRunning: false }));
+    }
+  }, [intervalId]);
+
+  const handleTimerComplete = useCallback(() => {
+    if (intervalId) {
+      clearInterval(intervalId);
+      setIntervalId(null);
+    }
+    setTimerState(prev => ({ ...prev, isRunning: false }));
+    setShowCompleteModal(true);
+  }, [intervalId]);
+
+  const resetTimer = useCallback(() => {
+    pauseTimer();
+    setTimerState(prev => ({
+      ...prev,
+      currentTime: prev.timeLimit,
+      isRunning: false,
+    }));
+  }, [pauseTimer]);
+
+  const handleModalClose = useCallback(() => {
+    setShowCompleteModal(false);
+    resetTimer();
+  }, [resetTimer]);
 
   const startTimer = useCallback(() => {
     if (!timerState.isRunning) {
@@ -21,51 +53,59 @@ export function Timer() {
         setTimerState(prev => {
           const newTime = Math.max(0, prev.currentTime - 1);
           
-          // If timer reaches 0 and we're in event mode
-          if (newTime === 0 && prev.mode === 'event' && prev.rounds) {
-            // If we're in an interval
-            if (prev.rounds.isInterval) {
+          // Timer complete conditions
+          if (newTime === 0 && prev.isRunning) {
+            if (prev.mode === 'simple') {
+              handleTimerComplete();
+              return { ...prev, currentTime: 0, isRunning: false };
+            }
+            
+            if (prev.mode === 'event' && prev.rounds) {
+              // If we're in an interval
+              if (prev.rounds.isInterval) {
+                return {
+                  ...prev,
+                  currentTime: prev.rounds.timePerRound,
+                  isRunning: true,
+                  rounds: {
+                    ...prev.rounds,
+                    isInterval: false,
+                    current: prev.rounds.current + 1
+                  }
+                };
+              }
+              // If we have more rounds and interval time
+              else if (prev.rounds.current < prev.rounds.total && prev.rounds.intervalTime > 0) {
+                return {
+                  ...prev,
+                  currentTime: prev.rounds.intervalTime,
+                  isRunning: true,
+                  rounds: {
+                    ...prev.rounds,
+                    isInterval: true
+                  }
+                };
+              }
+              // If we're done with all rounds or no interval
+              else if (prev.rounds.current < prev.rounds.total) {
+                return {
+                  ...prev,
+                  currentTime: prev.rounds.timePerRound,
+                  isRunning: true,
+                  rounds: {
+                    ...prev.rounds,
+                    current: prev.rounds.current + 1
+                  }
+                };
+              }
+              // Event completed
+              handleTimerComplete();
               return {
                 ...prev,
-                currentTime: prev.rounds.timePerRound,
-                isRunning: true,
-                rounds: {
-                  ...prev.rounds,
-                  isInterval: false,
-                  current: prev.rounds.current + 1
-                }
+                currentTime: 0,
+                isRunning: false
               };
             }
-            // If we have more rounds and interval time
-            else if (prev.rounds.current < prev.rounds.total && prev.rounds.intervalTime > 0) {
-              return {
-                ...prev,
-                currentTime: prev.rounds.intervalTime,
-                isRunning: true,
-                rounds: {
-                  ...prev.rounds,
-                  isInterval: true
-                }
-              };
-            }
-            // If we're done with all rounds or no interval
-            else if (prev.rounds.current < prev.rounds.total) {
-              return {
-                ...prev,
-                currentTime: prev.rounds.timePerRound,
-                isRunning: true,
-                rounds: {
-                  ...prev.rounds,
-                  current: prev.rounds.current + 1
-                }
-              };
-            }
-            // Event completed
-            return {
-              ...prev,
-              currentTime: 0,
-              isRunning: false
-            };
           }
 
           return {
@@ -78,24 +118,7 @@ export function Timer() {
       setIntervalId(id);
       setTimerState(prev => ({ ...prev, isRunning: true }));
     }
-  }, [timerState.isRunning]);
-
-  const pauseTimer = useCallback(() => {
-    if (intervalId) {
-      clearInterval(intervalId);
-      setIntervalId(null);
-      setTimerState(prev => ({ ...prev, isRunning: false }));
-    }
-  }, [intervalId]);
-
-  const resetTimer = useCallback(() => {
-    pauseTimer();
-    setTimerState(prev => ({
-      ...prev,
-      currentTime: prev.timeLimit,
-      isRunning: false,
-    }));
-  }, [pauseTimer]);
+  }, [timerState.isRunning, handleTimerComplete]);
 
   const setTime = useCallback((seconds: number) => {
     setTimerState(prev => ({
@@ -170,6 +193,9 @@ export function Timer() {
         </div>
       </main>
       <Footer />
+      {showCompleteModal && (
+        <TimerCompleteModal onClose={handleModalClose} />
+      )}
     </div>
   );
 }
