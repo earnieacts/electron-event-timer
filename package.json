@@ -5,7 +5,7 @@
   "main": "build/electron/main.js",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "tsc && vite build --outDir build/renderer",
     "preview": "vite preview",
     "electron:dev": "tsc -p electron && concurrently \"cross-env BROWSER=none yarn dev\" \"wait-on http://localhost:5173 && tsc -p electron -w\" \"wait-on http://localhost:5173 && electron .\"",
     "electron:build": "yarn build && tsc -p electron && electron-builder",
@@ -17,10 +17,15 @@
   "build": {
     "extends": null,
     "files": [
-      "build/**/*"
+      "build/**/*",
+      "public/**/*"
     ],
     "directories": {
-      "buildResources": "assets"
+      "buildResources": "assets",
+      "output": "dist"
+    },
+    "extraMetadata": {
+      "main": "build/electron/main.js"
     }
   },
   "browserslist": {
@@ -40,7 +45,10 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@emotion/react": "^11.13.5",
+    "@emotion/styled": "^11.13.5",
     "@mui/icons-material": "^6.1.8",
+    "@mui/material": "^6.1.8",
     "autoprefixer": "^10.4.20",
     "electron-is-dev": "^2.0.0",
     "postcss": "^8.4.49",
