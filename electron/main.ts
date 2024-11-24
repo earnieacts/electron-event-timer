@@ -45,6 +45,14 @@ function createWindow() {
     return mainWindow?.isMaximized();
   });
 
+  ipcMain.on('window:openExternal', async (_event, url) => {
+    try {
+      await shell.openExternal(url);
+    } catch (error) {
+      console.error('Failed to open external URL:', error);
+    }
+  });
+
   if (isDev) {
     mainWindow.webContents.openDevTools();
   }

@@ -49,9 +49,9 @@ contextBridge.exposeInMainWorld('electron', {
     isLinux: process.platform === 'linux'
   },
   window: {
-    minimize: () => ipcRenderer.send('window:minimize'),
-    maximize: () => ipcRenderer.send('window:maximize'),
-    close: () => ipcRenderer.send('window:close'),
+    minimize: () => ipcRenderer.invoke('window:minimize'),
+    maximize: () => ipcRenderer.invoke('window:maximize'),
+    close: () => ipcRenderer.invoke('window:close'),
     openExternal: (url: string) => {
       if (isValidUrl(url)) {
         ipcRenderer.send('window:openExternal', url);
