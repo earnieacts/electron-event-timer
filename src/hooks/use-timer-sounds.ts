@@ -8,6 +8,24 @@ export function useTimerSounds() {
   
   const [isCountdownVisible, setIsCountdownVisible] = useState(false);
 
+  const playSound = useCallback(async (audio: HTMLAudioElement) => {
+    try {
+      if (audio.paused) {
+        audio.currentTime = 0;
+        const playPromise = audio.play();
+        if (playPromise !== undefined) {
+          await playPromise;
+        }
+      }
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') {
+        // Ignore abort errors from pause interruptions
+        return;
+      }
+      console.error('Error playing sound:', error);
+    }
+  }, []);
+
   const stopAllSounds = useCallback(() => {
     timerSound.current.pause();
     timerSound.current.currentTime = 0;
@@ -21,21 +39,21 @@ export function useTimerSounds() {
 
   const playTimerSound = useCallback(() => {
     stopAllSounds();
-    timerSound.current.play();
+    playSound(timerSound.current);
   }, [stopAllSounds]);
 
   const playLastSecondsSound = useCallback(() => {
     stopAllSounds();
-    lastSecondsSound.current.play();
+    playSound(lastSecondsSound.current);
   }, [stopAllSounds]);
 
   const playCountdownSound = useCallback(() => {
-    countdownSound.current.play();
+    playSound(countdownSound.current);
   }, []);
 
   const playFinalSound = useCallback(() => {
     stopAllSounds();
-    finalSound.current.play();
+    playSound(finalSound.current);
   }, [stopAllSounds]);
 
   const startWithCountdown = useCallback((onCountdownComplete: () => void) => {
