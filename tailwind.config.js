@@ -7,6 +7,9 @@ module.exports = {
       animation: {
         'bounce-slow': 'bounce 2s infinite',
       },
+      screens: {
+        'fullscreen': {'raw': '(min-height: 900px) and (min-width: 1400px)'},
+      },
     },
   },
   plugins: [],
